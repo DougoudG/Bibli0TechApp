@@ -7,8 +7,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.testtechnorest.rest.HttpUtils;
 import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
 
-import org.json.JSONObject;
+import cz.msebera.android.httpclient.Header;
 
 
 public class MainActivity extends AppCompatActivity {
@@ -24,18 +25,21 @@ public class MainActivity extends AppCompatActivity {
 
         HttpUtils connection = new HttpUtils();
 
-        JSONObject loginData = new JSONObject();
         RequestParams params = new RequestParams();
 
-        params.put(fkUtilisateur, 1);
+        params.put("fkUtilisateur", 1);
 
-        connection.post("http://dougoudg.emf-informatique.ch/151_personal-projet-DOUGOUD-Guillaume/Server/livreManager.php",params,responseHandlerGet());
+        connection.get("http://dougoudg.emf-informatique.ch/151_personal-projet-DOUGOUD-Guillaume/Server/utilisateurManager.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                label.setText(statusCode+": "+responseString);
+            }
 
-        label.setText("Bien le bonjour");
-    }
-
-    private static void responseHandlerGet(){
-
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                label.setText(responseString);
+            }
+        });
 
     }
 
