@@ -1,4 +1,4 @@
-package com.example.testtechnopicture;
+package com.example.bibli0tech;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -70,14 +70,15 @@ public class MainActivity extends AppCompatActivity {
     //handling permission result
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        //super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        //le super est là pour respecter l'override ,mais en soit il ne me sert à rien
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch (requestCode) {
-            case PERMISSION_CODE: {
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+        switch (requestCode){
+            case PERMISSION_CODE:{
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
                     openCamera();
-                } else {
-                    Toast.makeText(this, "Permission denied...", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    Toast.makeText(this,"Permission denied...",Toast.LENGTH_SHORT).show();
                     //TODO "Take Picture with Camera - Android Studio - Java" 9:18
                 }
             }
@@ -86,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        //le super est là pour respecter l'override ,mais en soit il ne me sert à rien
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
 
