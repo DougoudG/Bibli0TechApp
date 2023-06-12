@@ -3,8 +3,13 @@ package com.example.bibli0tech;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
 
 import android.Manifest;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -34,6 +39,11 @@ public class MainActivity extends AppCompatActivity {
         mImageView = findViewById(R.id.image_view);
         mCaptureBtn = findViewById(R.id.capture_image_btn);
 
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationManager manager = getSystemService(NotificationManager.class);
+            manager.createNotificationChannel(channel);
+        }
         mCaptureBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -42,6 +52,8 @@ public class MainActivity extends AppCompatActivity {
                             checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED ){
                         String[] permission = {Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE};
                         requestPermissions(permission, PERMISSION_CODE);
+
+
                     }
                     else {
                         //permission already granted
@@ -80,6 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 else {
                     Toast.makeText(this,"Permission denied...",Toast.LENGTH_SHORT).show();
                     //TODO "Take Picture with Camera - Android Studio - Java" 9:18
+                    notify("Echec","la photo n'a pas pu être prise");
+
                 }
             }
         }
@@ -92,6 +106,29 @@ public class MainActivity extends AppCompatActivity {
         if (resultCode == RESULT_OK) {
 
             mImageView.setImageURI(image_uri);
+            notify("Reussite","une photo a bien été prise");
+        } else notify("Echec","L'image n'a pas pu être affiché");
+
+    }
+    private void notify(String title, String text) {
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My Notification");
+        builder.setContentTitle(title);
+        builder.setContentText(text);
+        builder.setSmallIcon(R.drawable.ic_launcher_background);
+        builder.setAutoCancel(true);
+
+        NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
+
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            //    return;
         }
+        managerCompat.notify(1, builder.build());
     }
 }
