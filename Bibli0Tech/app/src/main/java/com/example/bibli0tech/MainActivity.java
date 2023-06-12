@@ -20,7 +20,25 @@ import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.bibli0tech.bean.Oeuvre;
+import com.example.bibli0tech.rest.HttpUtils;
+import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.TextHttpResponseHandler;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.NodeList;
+import org.xml.sax.XMLReader;
+
+import java.util.ArrayList;
+import java.util.logging.XMLFormatter;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import cz.msebera.android.httpclient.Header;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -28,8 +46,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int IMAGE_CAPTURE_CODE = 1001;
     Button mCaptureBtn;
     ImageView mImageView;
-
     Uri image_uri;
+    TextView label;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
 
         mImageView = findViewById(R.id.image_view);
         mCaptureBtn = findViewById(R.id.capture_image_btn);
+        label = findViewById(R.id.label_REST);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel("My Notification", "My Notification", NotificationManager.IMPORTANCE_DEFAULT);
@@ -107,10 +126,11 @@ public class MainActivity extends AppCompatActivity {
 
             mImageView.setImageURI(image_uri);
             notify("Reussite","une photo a bien été prise");
+            getOeuvres();
         } else notify("Echec","L'image n'a pas pu être affiché");
 
     }
-    private void notify(String title, String text) {
+    public void notify(String title, String text) {
         NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My Notification");
         builder.setContentTitle(title);
         builder.setContentText(text);
@@ -130,5 +150,35 @@ public class MainActivity extends AppCompatActivity {
             //    return;
         }
         managerCompat.notify(1, builder.build());
+    }
+
+    private void getOeuvres(){
+        HttpUtils connection = new HttpUtils();
+        RequestParams params = new RequestParams();
+
+        params.put("fkutilisateur",1);
+
+        connection.get("http://dougoudg.emf-informatique.ch/151_personal-projet-DOUGOUD-Guillaume/Server/oeuvreManager.php", params, new TextHttpResponseHandler() {
+            @Override
+            public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
+                label.setText("Error "+statusCode+": "+responseString);
+            }
+
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, String responseString) {
+                String[] rps = responseString.split("<oeuvre><pk_oeuvre>");
+                Oeuvre oeuvre;
+                ArrayList<Oeuvre> oeuvres = new ArrayList<>();
+                for (int i = 1; i < rps.length; i++) {
+                    oeuvre = new Oeuvre(rps[i]);
+                    oeuvres.add(oeuvre);
+                }
+                String result = "";
+                for (Oeuvre o : oeuvres) {
+                    result += o.getNom()+"\n";
+                }
+                label.setText(result);
+            }
+        });
     }
 }

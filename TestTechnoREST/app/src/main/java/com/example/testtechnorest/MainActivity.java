@@ -27,9 +27,9 @@ public class MainActivity extends AppCompatActivity {
 
         RequestParams params = new RequestParams();
 
-        params.put("fkUtilisateur", 1);
+        params.put("fkutilisateur", 1);
 
-        connection.get("http://dougoudg.emf-informatique.ch/151_personal-projet-DOUGOUD-Guillaume/Server/utilisateurManager.php", params, new TextHttpResponseHandler() {
+        connection.get("http://dougoudg.emf-informatique.ch/151_personal-projet-DOUGOUD-Guillaume/Server/oeuvreManager.php", params, new TextHttpResponseHandler() {
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 label.setText(statusCode+": "+responseString);
