@@ -110,9 +110,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(this,"Permission denied...",Toast.LENGTH_SHORT).show();
-                    //TODO "Take Picture with Camera - Android Studio - Java" 9:18
                     notify("Echec","la photo n'a pas pu être prise");
-
                 }
             }
         }
@@ -120,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        //le super est là pour respecter l'override ,mais en soit il ne me sert à rien
         super.onActivityResult(requestCode, resultCode, data);
         if (resultCode == RESULT_OK) {
 
@@ -140,14 +137,15 @@ public class MainActivity extends AppCompatActivity {
         NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
 
         if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED) {
+            requestPermissions(new String[]{Manifest.permission.POST_NOTIFICATIONS},1);
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
             // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //public void onRequestPermissionsResult(int requestCode, String[] permissions)
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            //    return;
+            return;
         }
         managerCompat.notify(1, builder.build());
     }
